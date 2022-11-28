@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from rating_app.views import rating
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('rating/<int:pk>', rating)
+
 ]

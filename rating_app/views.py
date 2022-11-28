@@ -1,15 +1,13 @@
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rating_app.models import Rating
+from rest_framework import status
+
 from rating_app.serializers import RatingSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
-@action(methods=['POST'], detail=True)
-def rating(self, request, pk, *args, **kwargs):
-    serializers = RatingSerializer(data=request.data)
-    serializers.is_valid(raise_exception=True)
-    obj, _ = Rating.objects.get_or_create(product_id=pk,
-                                          owner=request.user)
-    obj.rating = request.data['rating']
-    obj.save()
-    return Response(request.data, status=201)
+@api_view(['POST'])
+def rating(request, pk):
+    serializer = RatingSerializer(data=request.data, context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    serializer.get_or_create_product_rating(pk)
+    return Response(request.data, status=status.HTTP_201_CREATED)
